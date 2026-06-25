@@ -1,5 +1,6 @@
 import datetime
 import json
+from pathlib import Path
 from openai import OpenAI
 import streamlit as st
 import uuid
@@ -71,8 +72,13 @@ with st.sidebar:
       st.write(f"Modèle utilisé : {st.session_state['openai_model']}")
 
       # Read the JSON file
-      with open("data/setup_prompts.json", "r") as file:
-          setup_prompts = json.load(file)
+      try:
+          data_file = Path(__file__).parent / "data" / "setup_prompts.json"
+          with open(data_file, "r", encoding="utf-8") as file:
+              setup_prompts = json.load(file)
+      except FileNotFoundError:
+          setup_prompts = []
+          st.warning("Fichier setup_prompts.json introuvable, utilisation des valeurs par défaut")
 
           # add option for Custom prompt
           setup_prompts["custom"] = {
